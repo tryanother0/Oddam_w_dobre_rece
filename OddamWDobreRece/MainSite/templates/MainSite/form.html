@@ -1,0 +1,491 @@
+{% extends 'MainSite/base.html' %}
+{% load static %}
+
+{% block content %}
+<header class="header--form-page">
+{% include 'MainSite/includes/header.html' %} 
+      <div class="slogan--steps">
+        <div class="slogan--steps-title">Wystarczą 4 proste kroki:</div>
+        <ul class="slogan--steps-boxes">
+          <li>
+            <div><em>1</em><span>Wybierz rzeczy</span></div>
+          </li>
+          <li>
+            <div><em>2</em><span>Spakuj je w worki</span></div>
+          </li>
+          <li>
+            <div><em>3</em><span>Wybierz fundację</span></div>
+          </li>
+          <li>
+            <div><em>4</em><span>Zamów kuriera</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+<form action="" method="post">
+  {% comment %} {% csrf_token %}
+  {{ form }}
+  <input type="submit" value="send"> {% endcomment %}
+</form>
+    <section class="form--steps">
+      <div class="form--steps-instructions">
+        <div class="form--steps-container">
+          <h3>Ważne!</h3>
+          <p data-step="1" class="active">
+            Uzupełnij szczegóły dotyczące Twoich rzeczy. Dzięki temu będziemy
+            wiedzieć komu najlepiej je przekazać.
+          </p>
+          <p data-step="2">
+            Uzupełnij szczegóły dotyczące Twoich rzeczy. Dzięki temu będziemy
+            wiedzieć komu najlepiej je przekazać.
+          </p>
+          <p data-step="3">
+           Wybierz jedną, do
+            której trafi Twoja przesyłka.
+          </p>
+          <p data-step="4">Podaj adres oraz termin odbioru rzeczy.</p>
+        </div>
+      </div>
+
+      <div class="form--steps-container">
+        <div class="form--steps-counter">Krok <span>1</span>/5</div>
+
+        <form action="" method="">
+          <!-- STEP 1: class .active is switching steps -->
+          <div data-step="1" class="active">
+            <h3>Zaznacz co chcesz oddać:</h3>
+            {% for category in donation_categories %}
+            <div class="form-group form-group--checkbox">
+              <label>
+                <input 
+                  id = "{{ category.pk }}"
+                  class="category-checked-js"
+                  type="checkbox"
+                  name="categories"
+                  value="{{ category }}"
+                />
+                <span class="checkbox"></span>
+                <span class="description"
+                  >{{ category }}</span
+                >
+              </label>
+            </div>
+            {% endfor %}
+            
+
+            <div class="form-group form-group--buttons">
+              <button id="submit-js" type="button" class="btn next-step">Dalej</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div data-step="2">
+            <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
+
+            <div class="form-group form-group--inline">
+              <label>
+                Liczba 60l worków:
+                <input type="number" name="bags" step="1" min="1" class=" bags-number-js"/>
+              </label>
+            </div>
+
+            <div class="form-group form-group--buttons">
+              <button type="button" class="btn prev-step">Wstecz</button>
+              <button type="button" class="btn next-step bags-next-step-js">Dalej</button>
+            </div>
+          </div>
+
+
+
+          <!-- STEP 3 -->
+          <div data-step="3">
+            <h3>Wybierz organizacje, której chcesz pomóc:</h3>
+            {% for institution in institutions %}
+            <div class="form-group form-group--checkbox organization-js-class">
+              <label>
+                <input class="institution-checked-js" type="radio" name="organization" value="{{institution.name}}" id="{{ institution.pk }}"/>
+                <span class="checkbox radio"></span>
+                <span class="description">
+                  <div class="title">
+                    {% if institution.type == 'fundation' %}
+                    Fundacja {{ institution.name }}
+                    {% elif institution.type == 'ngo' %}
+                    Organizacja Pozarządowa {{ institution.name }}
+                    {% else %} 
+                    Inicjatywa lokalna {{ institution.name }}
+                    {% endif %}
+                  </div>
+                  <div class="subtitle">
+                    {{ institution.description }} 
+                    
+                  </div>
+                  <div >
+                    <ul id='institution-category'>{% for cat in institution.categories.all %}
+                    <li>{{cat}}</li>
+                    {%endfor%}
+                    </ul>
+                  </div>
+                </span>
+              </label>
+            </div>
+            {% endfor %}
+
+            
+
+            <div class="form-group form-group--buttons">
+              <button type="button" class="btn prev-step">Wstecz</button>
+              <button type="button" class="btn next-step">Dalej</button>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div data-step="4">
+            <h3>Podaj adres oraz termin odbioru rzecz przez kuriera:</h3>
+
+            <div class="form-section form-section--columns">
+              <div class="form-section--column">
+                <h4>Adres odbioru</h4>
+                <div class="form-group form-group--inline">
+                  <label> Ulica <input type="text" name="address" class="form-address-street" /> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                  <label> Miasto <input type="text" name="city" class="form-address-city"  /> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                  <label>
+                    Kod pocztowy <input type="text" name="postcode" class="form-address-postcode"  />
+                  </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                  <label>
+                    Numer telefonu <input type="phone" name="phone" class="form-address-phone"  />
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-section--column">
+                <h4>Termin odbioru</h4>
+                <div class="form-group form-group--inline">
+                  <label> Data <input type="date" name="data" class="form-address-date"  /> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                  <label> Godzina <input type="time" name="time" class="form-address-time"  /> </label>
+                </div>
+
+                <div class="form-group form-group--inline">
+                  <label>
+                    Uwagi dla kuriera
+                    <textarea name="more_info" rows="5" class="form-address-notes" ></textarea>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group form-group--buttons">
+              <button type="button" class="btn prev-step">Wstecz</button>
+              <button type="button" class="btn next-step last-step">Dalej</button>
+            </div>
+          </div>
+
+          <!-- STEP 6 -->
+          <div data-step="5">
+            <h3>Podsumowanie Twojej darowizny</h3>
+
+            <div class="summary">
+              <div class="form-section">
+                <h4>Oddajesz:</h4>
+                <ul>
+                  <li>
+                    <span class="icon icon-bag"></span>
+                    <span class="summary--text bags-summary"
+                      >4 worki ubrań w dobrym stanie dla dzieci</span
+                    >
+                  </li>
+
+                  <li>
+                    <span class="icon icon-hand"></span>
+                    <span class="summary--text institution-summary"
+                      >Dla fundacji "Mam marzenie" w Warszawie</span
+                    >
+                  </li>
+                </ul>
+              </div>
+
+              <script>
+                /* obsługa formularza */
+                /* sprawdzenie, które kategorie są wybrane */
+                var checkedCategories = {};
+                
+                /*  
+                funkcja pobierające wszystkie zaznaczone kategorie i zapisująca ich value (nazwa kategorii) do słownika  checkedCategories
+                następnie pobierająca wszystkie organizacje i porównujaca listę kategorii z listą kategorii danej organizacji
+                te, które się nie pokrywają dostają hidden 
+                */
+                function updateCheckedCategories() {
+                    checkedCategories = {};
+
+                    var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+  
+                    checkboxes.forEach(function(checkbox) {
+                        var categoryName = checkbox.value;
+                        checkedCategories[categoryName] = true;
+                        return checkedCategories;
+                    });
+
+                    var institutionDiv = document.querySelectorAll('.organization-js-class');
+  
+                    institutionDiv.forEach(function(div) {
+                        var institutionCategories = div.querySelectorAll('ul#institution-category li');
+
+                        var match = Array.from(institutionCategories).some(function(category) {
+                            return checkedCategories[category.innerText];
+                        });
+
+                        if (match) {
+                            div.removeAttribute('hidden');
+                        } else {
+                            div.setAttribute('hidden', true);
+                        }
+                    });
+                  }
+                /* wywołanie funkcji ograniczającej instytucje po załadowaniu strony */
+                window.addEventListener('load', updateCheckedCategories);
+                
+                /* wywołanie funkcji ograniczającej instytucje po zmianie zaznaczenia checkboxa */
+                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', updateCheckedCategories);
+                });
+
+                /* KONIEC OBSŁUGI WYŚWIETLANIA INSTYTUCJI */
+
+                /* ZBIERANIE DANYCH DO FORMULARZA*/ 
+                /* funkcja pobierająca aktualną wartość worków */
+                function changeBagsNumber() {
+                  var bagsNumberInput = document.querySelector('.bags-number-js');
+                  console.log("bagsNumberInput")
+                  console.log(bagsNumberInput)
+                  var bagsNumber = bagsNumberInput.value;
+                  initialBagsNumber = bagsNumber;
+                  return bagsNumber;
+                }
+
+                /* funkcja pobierająca zaznaczoną organizację */
+                var selectedOrganizationInput = document.querySelector('input[name="organization"]:checked');
+
+                function changeSelectedOrganization() {
+                  var selectedOrganizationInput = document.querySelector('input[name="organization"]:checked');
+                  if (selectedOrganizationInput) {
+                      var selectedOrganizationName = selectedOrganizationInput.parentNode.querySelector('.title').textContent.trim();
+                      return selectedOrganizationName;
+                  } else {
+                      console.log("Żadna instytucja nie została zaznaczona.");
+                      return null; 
+                  }
+                }
+                
+                /* wywołanie funkcji pobierającej ilość worków po zmianie wartości */
+                var bagsNumberInput = document.querySelector('.bags-next-step-js');
+                var initialBagsNumber = 0
+                bagsNumberInput.addEventListener('click', changeBagsNumber);
+                
+                /* wywołanie funkcji pobierającej nazwę organizacji po zmianie wartości */
+                var organizationInputs = document.querySelectorAll('input[name="organization"]');
+                organizationInputs.forEach(function(input) {
+                    input.addEventListener('change', changeSelectedOrganization);
+                });
+
+                var initialBagsNumber = changeBagsNumber();
+                
+                var initialSelectedOrganization = changeSelectedOrganization();
+
+                /* KONIEC POBIERANIA ILOŚCI WORKÓW I NAZWY ORGANIZACJI DO FORMULARZA */
+                
+                /* złapanie elementów z tekstem podsumowania */
+                var summaryDiv = document.querySelector('.summary');
+                var summaryBags = summaryDiv.querySelector('.bags-summary')
+                
+                /* pobranie nazwy instytucji, kategorii i wywołanie funkcji na last step */
+                var lastStepElement = document.querySelector('.last-step');
+                lastStepElement.addEventListener('click', function(){
+                  var institutionElements = document.querySelectorAll('.institution-checked-js');
+                  var checkedInstitution = null;
+                  var checkedInstitutionId = null;
+                  
+                  institutionElements.forEach(function(element) {
+                      if (element.checked) {
+                          checkedInstitution = element;
+                          checkedInstitutionId = element.id
+                          return;
+                      }
+                  });
+
+                  /* pobranie kategorii */
+                  var categoriesElement = document.querySelectorAll('.category-checked-js');
+                  console.log("dsada: ")
+                  console.log(categoriesElement)
+                  var checkedCategories = [];
+                  var checkedCategoriesId = [];
+                  console.log(checkedCategoriesId)
+                  categoriesElement.forEach(function(element){
+                    if(element.checked){
+                      checkedCategories.push(element);                }
+                  });
+
+                  categoriesElement.forEach(function(element){
+                    if(element.checked){
+                      checkedCategoriesId.push(element.id)
+                    }
+                  });
+                  checkedCategoriesId = checkedCategoriesId.join(',');
+                  /* Utworzenie stringa kategorii */
+                  var categoriesString = checkedCategories.map(function(category) {
+                    return category.value;
+                  }).join(', ');
+
+
+                  var summaryString = categoriesString + " - " + initialBagsNumber + " worki";
+                  
+                  /* generowanie danych odbioru w podsumowaniu */
+                  var catchValue = document.querySelector('.form-address-street');
+                  var catchSummaryValue = document.querySelector('.form-address-street-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-city');
+                  var catchSummaryValue = document.querySelector('.form-address-city-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-postcode');
+                  var catchSummaryValue = document.querySelector('.form-address-postcode-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-phone');
+                  var catchSummaryValue = document.querySelector('.form-address-phone-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-date');
+                  var catchSummaryValue = document.querySelector('.form-address-date-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-time');
+                  var catchSummaryValue = document.querySelector('.form-address-time-summary');
+                  catchSummaryValue.innerText = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-notes');
+                  var catchSummaryValue = document.querySelector('.form-address-notes-summary');
+                  if(catchValue.value != ""){
+                    catchSummaryValue.innerText = catchValue.value;
+                  }
+                  /* koniec generowanie podsumowania danych donacji */ 
+
+                  /* generowanie danych odbioru w hidden form */
+                  
+                  var catchHiddenFormValue = document.querySelector('#id_quantity');
+                  catchHiddenFormValue.value = initialBagsNumber;
+
+                  var catchHiddenFormValue = document.querySelector('#id_categories');
+                  catchHiddenFormValue.value = checkedCategoriesId;
+
+                  var catchValue = document.querySelector('.form-address-street');
+                  var catchHiddenFormValue = document.querySelector('#id_address');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-city');
+                  var catchHiddenFormValue = document.querySelector('#id_donation_city');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchHiddenFormValue = document.querySelector('#id_institution');
+                  catchHiddenFormValue.value = checkedInstitutionId;
+
+                  var catchHiddenFormValue = document.querySelector('#id_user');
+                  catchHiddenFormValue.value = {{user.pk}};
+                  console.log("user")
+                  console.log(catchHiddenFormValue)
+
+                  var catchValue = document.querySelector('.form-address-postcode');
+                  var catchHiddenFormValue = document.querySelector('#id_zip_code');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-phone');
+                  var catchHiddenFormValue = document.querySelector('#id_phone_number');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-date');
+                  var catchHiddenFormValue = document.querySelector('#id_pick_up_date');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-time');
+                  var catchHiddenFormValue = document.querySelector('#id_pick_up_time');
+                  catchHiddenFormValue.value = catchValue.value;
+
+                  var catchValue = document.querySelector('.form-address-notes');
+                  var catchHiddenFormValue = document.querySelector('#id_pick_up_comment');
+                  if(catchValue.value != ""){
+                    catchHiddenFormValue.value = catchValue.value;
+                  }
+                  /* koniec generowanie podsumowania danych donacji */ 
+                  /* nadpisanie podsumowania ilości worków */ 
+                  var bagsSummary = document.querySelector('.bags-summary');
+                  bagsSummary.innerText = summaryString;
+
+                  /* nadpisanie instytucji */
+                  var instututionSummary = document.querySelector('.institution-summary');
+                  instututionSummary.innerText = checkedInstitution.value;
+                });
+
+
+              </script>
+            </form>
+              <div class="form-section form-section--columns">
+                <div class="form-section--column">
+                  <h4>Adres odbioru:</h4>
+                  <ul>
+                    <li class="form-address-street-summary"></li>
+                    <li class="form-address-city-summary">Warszawa</li>
+                    <li class="form-address-postcode-summary">99-098</li>
+                    <li class="form-address-phone-summary">123 456 789</li>
+                  </ul>
+                </div>
+                <form action="" method="post" hidden>
+                  {% csrf_token %}
+                  <input name="quantity" id="id_quantity" value="3" />
+                  <input name="institution" id="id_institution" value="1" />
+                  <input name="categories" id="id_categories" value="1" />
+                  <input name="address" id="id_address" value="1" />
+                  <input name="donation_city" id="id_donation_city" value="1" />
+                  <input name="zip_code" id="id_zip_code" value="1" />
+                  <input name="phone_number" id="id_phone_number" value="1" />
+                  <input name="pick_up_date" id="id_pick_up_date" value="2000-12-22" />
+                  <input name="pick_up_time" id="id_pick_up_time" value="11:11" />
+                  <input name="pick_up_comment" id="id_pick_up_comment" value="1" />
+                  <input name="user" id="id_user" value="1" />
+                  
+                <div class="form-section--column">
+                  <h4>Termin odbioru:</h4>
+                  <ul>
+                    <li class="form-address-date-summary">13/12/2018</li>
+                    <li class="form-address-time-summary">15:40</li>
+                    <li class="form-address-notes-summary">Brak uwag</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group form-group--buttons">
+              <button type="button" class="btn prev-step">Wstecz</button>
+              <input type="submit" class="btn" value="Potwierdzam"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+
+    <script src="{% static 'MainSite/js/app.js' %}"></script>
+
+{% endblock %}

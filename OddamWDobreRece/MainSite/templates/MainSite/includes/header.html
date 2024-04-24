@@ -1,0 +1,33 @@
+<nav class="container container--70"  id="start">
+  {% if user.is_authenticated %}
+    <div class="nav--actions">
+      <div class="nav--dropdown">
+        <span class="btn btn--small btn--without-border">Witaj, {{ user.first_name }}</span>
+        <div class="nav--dropdown-content" > 
+            <p><a href="{% url 'user-view' %}">Profil</a></p>
+            <p><a href="{% url 'index' %}">Ustawienia</a></p>
+            <p><a href="{% url 'logout' %}">Wyloguj</a></p>
+        </div>
+      </div>
+    </div>
+  {% else %}
+  
+    <ul class="nav--actions">
+      <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
+      <li><a href="{% url 'register' %}#register-section" class="btn btn--small btn--highlighted">Załóż konto</a></li>
+    </ul>
+  {% endif %}
+    <ul>
+      <li><a href="/#start" class="btn btn--without-border active">Start</a></li>
+      <li><a href="/#steps" class="btn btn--without-border">O co chodzi?</a></li>
+      <li><a href="/#about-us" class="btn btn--without-border">O nas</a></li>
+      <li><a href="/#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+    {% if user.is_authenticated %}
+      <li><a href="{% url 'donate' %}" class="btn btn--without-border">Przekaż dary</a></li>
+    {% else %}
+      <li><a href="{% url 'login' %}" class="btn btn--without-border">Przekaż dary</a></li>
+    {% endif %}
+      <li><a href="#contact" class="btn btn--without-border">Kontakt</a></li>
+    </ul>
+  </nav>
+  
